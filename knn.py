@@ -65,4 +65,4 @@ if __name__ == '__main__':
 		result.append([i, label])
 	saveResult(result)
 
-
+#acc = 0.9534
