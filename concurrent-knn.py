@@ -13,6 +13,9 @@ val_label = []
 test_data = []
 test_label = []
 
+N = 100
+color = 100/255
+
 def loadTrainData():
 	l = []
 	with open('train.csv', 'r') as f:
@@ -27,9 +30,13 @@ def loadTrainData():
 		label = np.int32(label)
 		data = np.int32(data)
 
+		img = CutPicture(data)
+		img = StretchPicture(img).reshape(N**2)
+
+
 		#data = np.mat(data)
 		#label = np.mat(label)
-		return data, label
+		return img, label
 
 def loadTestData():
 	l = []
@@ -40,7 +47,45 @@ def loadTestData():
 		l.remove(l[0])
 		data = np.array(l)
 		data = np.int32(data)
-		return data
+		img = CutPicture(data)
+		img = StretchPicture(img).reshape(N**2)
+		return img
+
+#切割图象
+def CutPicture(img):
+    size = JudgeEdge(img)
+	return img[size[0]:size[1]+1, size[2]:size[3]+1]
+
+def JudgeEdge(img):
+	x1, y1, x2, y2 = 28, 28, 0, 0
+	for i in range(28):
+		for j in range(28):
+			if img[i, j] > 0:
+				x1 = min(x1, i)
+				y1 = min(y1, j)
+				x2 = max(x2, i)
+				y2 = max(y2, j)
+	return [x1, y1, x2, y2]
+
+#拉伸图像
+def StretchPicture(img):
+	newImg = np.ones(N**2).reshape(N, N)
+	newImg1 = np.ones(N ** 2).reshape(N, N)
+
+	step1 = len(img[0])/N
+
+	step2 = len(img)/N
+
+	for i in range(len(img)):
+		for j in range(N):
+			newImg[i, j] = img[i, int(np.floor(j*step1))]
+
+	for i in range(N):
+		for j in range(N):
+			newImg1[j, i] = newImg[int(np.floor(j*step2)), i]
+	return newImg1
+
+
 
 def KNN(target, traindata, trainlabel, k = 1):
 	size = traindata.shape[0]
