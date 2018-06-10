@@ -171,3 +171,4 @@ if __name__ == '__main__':
   #p = pstats.Stats("prof.txt")
   #p.sort_stats("time").print_stats()
   main()
+  #0.98400
